@@ -1,0 +1,667 @@
+[
+  {
+    "test": "Patient Suite - 01. Auth Login",
+    "timestamp": "2026-09-03T16:09:48.065Z",
+    "request": {
+      "method": "POST",
+      "url": "http://localhost:5000/auth/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "patient@example.com",
+        "password": "password123"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64",
+        "token_type": "bearer",
+        "user": {
+          "id": "P001",
+          "name": "John Doe",
+          "email": "patient@example.com",
+          "role": "PATIENT"
+        }
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 02. Patient Profile",
+    "timestamp": "2026-09-03T16:09:48.218Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "P001",
+        "name": "John Doe",
+        "age": 72,
+        "diagnosis": "Mild Cognitive Impairment",
+        "activities_completed": 14,
+        "current_streak": 5
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 03. Patient Progress",
+    "timestamp": "2026-09-03T16:09:48.221Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me/progress",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "activities_completed": 14,
+        "current_streak": 5
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 04. Patient Reminders",
+    "timestamp": "2026-09-03T16:09:48.222Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me/reminders",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "id": "R01",
+          "title": "Drink Water",
+          "time": "02:00 PM",
+          "status": "PENDING"
+        },
+        {
+          "id": "R02",
+          "title": "Evening Walk",
+          "time": "05:00 PM",
+          "status": "PENDING"
+        }
+      ]
+    }
+  },
+  {
+    "test": "Patient Suite - 05. Patient Medications",
+    "timestamp": "2026-09-03T16:09:48.223Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me/medications",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "id": "M01",
+          "name": "Donepezil",
+          "dosage": "5mg",
+          "time": "08:00 AM",
+          "taken": true
+        },
+        {
+          "id": "M02",
+          "name": "Memantine",
+          "dosage": "10mg",
+          "time": "08:00 PM",
+          "taken": false
+        }
+      ]
+    }
+  },
+  {
+    "test": "Patient Suite - 06. Activity List",
+    "timestamp": "2026-09-03T16:09:48.224Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/activities",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "id": "A101",
+          "title": "Pattern Match",
+          "category": "Pattern Recognition",
+          "duration_minutes": 5,
+          "difficulty_level": "EASY"
+        },
+        {
+          "id": "A102",
+          "title": "Daily Routine Recall",
+          "category": "Memory & Recall",
+          "duration_minutes": 10,
+          "difficulty_level": "EASY"
+        }
+      ]
+    }
+  },
+  {
+    "test": "Patient Suite - 07. Activity Details",
+    "timestamp": "2026-09-03T16:09:48.226Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/activities/A101",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "A101",
+        "title": "Pattern Match",
+        "category": "Pattern Recognition",
+        "duration_minutes": 5,
+        "difficulty_level": "EASY"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 08. Start Session",
+    "timestamp": "2026-09-03T16:09:48.227Z",
+    "request": {
+      "method": "POST",
+      "url": "http://localhost:5000/activities/A101/sessions",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": {}
+    },
+    "response": {
+      "status": 201,
+      "body": {
+        "session_id": "S_1788451788228",
+        "activity_id": "A101",
+        "status": "STARTED",
+        "started_at": "2026-09-03T16:09:48.228Z"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 09. Complete Session",
+    "timestamp": "2026-09-03T16:09:48.229Z",
+    "request": {
+      "method": "POST",
+      "url": "http://localhost:5000/activities/A101/sessions/S_1788451788228/complete",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": {
+        "score": 90
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "session_id": "S_1788451788228",
+        "status": "COMPLETED",
+        "score": 90,
+        "adaptation_next_level": "MEDIUM"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 10. Caregiver Patient List (Denied)",
+    "timestamp": "2026-09-03T16:09:48.231Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 11. Caregiver Patient Details (Denied)",
+    "timestamp": "2026-09-03T16:09:48.233Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 12. Caregiver Patient History (Denied)",
+    "timestamp": "2026-09-03T16:09:48.234Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001/history",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 13. Caregiver Patient Progress (Denied)",
+    "timestamp": "2026-09-03T16:09:48.234Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001/progress",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 14. Caregiver Patient Medications (Denied)",
+    "timestamp": "2026-09-03T16:09:48.235Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001/medications",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Patient Suite - 15. Caregiver Alerts (Denied)",
+    "timestamp": "2026-09-03T16:09:48.236Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/alerts",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 01. Auth Login",
+    "timestamp": "2026-09-03T16:09:48.237Z",
+    "request": {
+      "method": "POST",
+      "url": "http://localhost:5000/auth/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "caregiver@example.com",
+        "password": "password123"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4",
+        "token_type": "bearer",
+        "user": {
+          "id": "C001",
+          "name": "Sarah Caregiver",
+          "email": "caregiver@example.com",
+          "role": "CAREGIVER"
+        }
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 02. Patient List",
+    "timestamp": "2026-09-03T16:09:48.238Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "id": "P001",
+          "name": "John Doe",
+          "age": 72,
+          "diagnosis": "Mild Cognitive Impairment",
+          "activities_completed": 14,
+          "current_streak": 5
+        }
+      ]
+    }
+  },
+  {
+    "test": "Caregiver Suite - 03. Patient Details",
+    "timestamp": "2026-09-03T16:09:48.239Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "P001",
+        "name": "John Doe",
+        "age": 72,
+        "diagnosis": "Mild Cognitive Impairment",
+        "activities_completed": 14,
+        "current_streak": 5
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 04. Patient History",
+    "timestamp": "2026-09-03T16:09:48.240Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001/history",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "date": "2026-09-02",
+          "activity": "Pattern Match",
+          "score": 90
+        },
+        {
+          "date": "2026-09-03",
+          "activity": "Daily Routine Recall",
+          "score": 80
+        }
+      ]
+    }
+  },
+  {
+    "test": "Caregiver Suite - 05. Patient Progress",
+    "timestamp": "2026-09-03T16:09:48.241Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001/progress",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "weekly_completion_rate": "85%",
+        "memory_trend": "Stable"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 06. Patient Medications",
+    "timestamp": "2026-09-03T16:09:48.241Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/patients/P001/medications",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "id": "M01",
+          "name": "Donepezil",
+          "dosage": "5mg",
+          "time": "08:00 AM",
+          "taken": true
+        },
+        {
+          "id": "M02",
+          "name": "Memantine",
+          "dosage": "10mg",
+          "time": "08:00 PM",
+          "taken": false
+        }
+      ]
+    }
+  },
+  {
+    "test": "Caregiver Suite - 07. Alerts",
+    "timestamp": "2026-09-03T16:09:48.242Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/caregiver/alerts",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 200,
+      "body": [
+        {
+          "id": "ALT01",
+          "patient_id": "P001",
+          "type": "MISSED_ACTIVITY",
+          "message": "Missed 2:00 PM Hydration Reminder",
+          "timestamp": "2026-09-03T16:08:11.098Z"
+        }
+      ]
+    }
+  },
+  {
+    "test": "Caregiver Suite - 08. Activity List",
+    "timestamp": "2026-09-03T16:09:48.243Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/activities",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 09. Activity Details",
+    "timestamp": "2026-09-03T16:09:48.244Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/activities/A101",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 10. Patient Profile (Denied)",
+    "timestamp": "2026-09-03T16:09:48.245Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 11. Patient Progress (Denied)",
+    "timestamp": "2026-09-03T16:09:48.245Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me/progress",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 12. Patient Reminders (Denied)",
+    "timestamp": "2026-09-03T16:09:48.246Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me/reminders",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 13. Patient Medications (Denied)",
+    "timestamp": "2026-09-03T16:09:48.247Z",
+    "request": {
+      "method": "GET",
+      "url": "http://localhost:5000/patients/me/medications",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": null
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  },
+  {
+    "test": "Caregiver Suite - 14. Start Session (Denied)",
+    "timestamp": "2026-09-03T16:09:48.248Z",
+    "request": {
+      "method": "POST",
+      "url": "http://localhost:5000/activities/A101/sessions",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+      },
+      "body": {}
+    },
+    "response": {
+      "status": 403,
+      "body": {
+        "error": "Forbidden: Insufficient permissions"
+      }
+    }
+  }
+]
