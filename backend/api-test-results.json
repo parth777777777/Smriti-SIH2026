@@ -1,7 +1,7 @@
 [
   {
     "test": "Patient Suite - 01. Auth Login",
-    "timestamp": "2026-09-03T16:09:48.065Z",
+    "timestamp": "2026-09-05T14:10:52.241Z",
     "request": {
       "method": "POST",
       "url": "http://localhost:5000/auth/login",
@@ -16,7 +16,7 @@
     "response": {
       "status": 200,
       "body": {
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64",
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc",
         "token_type": "bearer",
         "user": {
           "id": "P001",
@@ -29,13 +29,13 @@
   },
   {
     "test": "Patient Suite - 02. Patient Profile",
-    "timestamp": "2026-09-03T16:09:48.218Z",
+    "timestamp": "2026-09-05T14:10:53.581Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -53,13 +53,13 @@
   },
   {
     "test": "Patient Suite - 03. Patient Progress",
-    "timestamp": "2026-09-03T16:09:48.221Z",
+    "timestamp": "2026-09-05T14:10:53.622Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me/progress",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -73,13 +73,13 @@
   },
   {
     "test": "Patient Suite - 04. Patient Reminders",
-    "timestamp": "2026-09-03T16:09:48.222Z",
+    "timestamp": "2026-09-05T14:10:53.626Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me/reminders",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -103,13 +103,13 @@
   },
   {
     "test": "Patient Suite - 05. Patient Medications",
-    "timestamp": "2026-09-03T16:09:48.223Z",
+    "timestamp": "2026-09-05T14:10:53.630Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me/medications",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -135,13 +135,13 @@
   },
   {
     "test": "Patient Suite - 06. Activity List",
-    "timestamp": "2026-09-03T16:09:48.224Z",
+    "timestamp": "2026-09-05T14:10:53.636Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/activities",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -167,13 +167,13 @@
   },
   {
     "test": "Patient Suite - 07. Activity Details",
-    "timestamp": "2026-09-03T16:09:48.226Z",
+    "timestamp": "2026-09-05T14:10:53.644Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/activities/A101",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -190,35 +190,35 @@
   },
   {
     "test": "Patient Suite - 08. Start Session",
-    "timestamp": "2026-09-03T16:09:48.227Z",
+    "timestamp": "2026-09-05T14:10:53.654Z",
     "request": {
       "method": "POST",
       "url": "http://localhost:5000/activities/A101/sessions",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": {}
     },
     "response": {
       "status": 201,
       "body": {
-        "session_id": "S_1788451788228",
+        "session_id": "S_1788617453665",
         "activity_id": "A101",
         "status": "STARTED",
-        "started_at": "2026-09-03T16:09:48.228Z"
+        "started_at": "2026-09-05T14:10:53.666Z"
       }
     }
   },
   {
     "test": "Patient Suite - 09. Complete Session",
-    "timestamp": "2026-09-03T16:09:48.229Z",
+    "timestamp": "2026-09-05T14:10:53.668Z",
     "request": {
       "method": "POST",
-      "url": "http://localhost:5000/activities/A101/sessions/S_1788451788228/complete",
+      "url": "http://localhost:5000/activities/A101/sessions/S_1788617453665/complete",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": {
         "score": 90
@@ -227,7 +227,7 @@
     "response": {
       "status": 200,
       "body": {
-        "session_id": "S_1788451788228",
+        "session_id": "S_1788617453665",
         "status": "COMPLETED",
         "score": 90,
         "adaptation_next_level": "MEDIUM"
@@ -236,13 +236,13 @@
   },
   {
     "test": "Patient Suite - 10. Caregiver Patient List (Denied)",
-    "timestamp": "2026-09-03T16:09:48.231Z",
+    "timestamp": "2026-09-05T14:10:53.681Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -255,13 +255,13 @@
   },
   {
     "test": "Patient Suite - 11. Caregiver Patient Details (Denied)",
-    "timestamp": "2026-09-03T16:09:48.233Z",
+    "timestamp": "2026-09-05T14:10:53.688Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -274,13 +274,13 @@
   },
   {
     "test": "Patient Suite - 12. Caregiver Patient History (Denied)",
-    "timestamp": "2026-09-03T16:09:48.234Z",
+    "timestamp": "2026-09-05T14:10:53.695Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001/history",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -293,13 +293,13 @@
   },
   {
     "test": "Patient Suite - 13. Caregiver Patient Progress (Denied)",
-    "timestamp": "2026-09-03T16:09:48.234Z",
+    "timestamp": "2026-09-05T14:10:53.703Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001/progress",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -312,13 +312,13 @@
   },
   {
     "test": "Patient Suite - 14. Caregiver Patient Medications (Denied)",
-    "timestamp": "2026-09-03T16:09:48.235Z",
+    "timestamp": "2026-09-05T14:10:53.713Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001/medications",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -331,13 +331,13 @@
   },
   {
     "test": "Patient Suite - 15. Caregiver Alerts (Denied)",
-    "timestamp": "2026-09-03T16:09:48.236Z",
+    "timestamp": "2026-09-05T14:10:53.715Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/alerts",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODQ1MTc4OCwiZXhwIjoxNzg4NTM4MTg4fQ.upSH0jCH1b6fbOfGqJpe8pF0Q6DtgWqhE8j4cSaYN64"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlAwMDEiLCJlbWFpbCI6InBhdGllbnRAZXhhbXBsZS5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4ODYxNzQ1MywiZXhwIjoxNzg4NzAzODUzfQ.t1XWV3BpBC8wkUUUYiqt7MAUoD5nWIjtleBB4L3aUtc"
       },
       "body": null
     },
@@ -350,7 +350,7 @@
   },
   {
     "test": "Caregiver Suite - 01. Auth Login",
-    "timestamp": "2026-09-03T16:09:48.237Z",
+    "timestamp": "2026-09-05T14:10:53.722Z",
     "request": {
       "method": "POST",
       "url": "http://localhost:5000/auth/login",
@@ -365,7 +365,7 @@
     "response": {
       "status": 200,
       "body": {
-        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4",
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc",
         "token_type": "bearer",
         "user": {
           "id": "C001",
@@ -378,13 +378,13 @@
   },
   {
     "test": "Caregiver Suite - 02. Patient List",
-    "timestamp": "2026-09-03T16:09:48.238Z",
+    "timestamp": "2026-09-05T14:10:53.725Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -404,13 +404,13 @@
   },
   {
     "test": "Caregiver Suite - 03. Patient Details",
-    "timestamp": "2026-09-03T16:09:48.239Z",
+    "timestamp": "2026-09-05T14:10:53.726Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -428,13 +428,13 @@
   },
   {
     "test": "Caregiver Suite - 04. Patient History",
-    "timestamp": "2026-09-03T16:09:48.240Z",
+    "timestamp": "2026-09-05T14:10:53.727Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001/history",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -456,13 +456,13 @@
   },
   {
     "test": "Caregiver Suite - 05. Patient Progress",
-    "timestamp": "2026-09-03T16:09:48.241Z",
+    "timestamp": "2026-09-05T14:10:53.728Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001/progress",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -476,13 +476,13 @@
   },
   {
     "test": "Caregiver Suite - 06. Patient Medications",
-    "timestamp": "2026-09-03T16:09:48.241Z",
+    "timestamp": "2026-09-05T14:10:53.730Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/patients/P001/medications",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -508,13 +508,13 @@
   },
   {
     "test": "Caregiver Suite - 07. Alerts",
-    "timestamp": "2026-09-03T16:09:48.242Z",
+    "timestamp": "2026-09-05T14:10:53.733Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/caregiver/alerts",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -526,20 +526,20 @@
           "patient_id": "P001",
           "type": "MISSED_ACTIVITY",
           "message": "Missed 2:00 PM Hydration Reminder",
-          "timestamp": "2026-09-03T16:08:11.098Z"
+          "timestamp": "2026-09-04T14:19:28.191Z"
         }
       ]
     }
   },
   {
     "test": "Caregiver Suite - 08. Activity List",
-    "timestamp": "2026-09-03T16:09:48.243Z",
+    "timestamp": "2026-09-05T14:10:53.734Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/activities",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -552,13 +552,13 @@
   },
   {
     "test": "Caregiver Suite - 09. Activity Details",
-    "timestamp": "2026-09-03T16:09:48.244Z",
+    "timestamp": "2026-09-05T14:10:53.735Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/activities/A101",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -571,13 +571,13 @@
   },
   {
     "test": "Caregiver Suite - 10. Patient Profile (Denied)",
-    "timestamp": "2026-09-03T16:09:48.245Z",
+    "timestamp": "2026-09-05T14:10:53.736Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -590,13 +590,13 @@
   },
   {
     "test": "Caregiver Suite - 11. Patient Progress (Denied)",
-    "timestamp": "2026-09-03T16:09:48.245Z",
+    "timestamp": "2026-09-05T14:10:53.739Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me/progress",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -609,13 +609,13 @@
   },
   {
     "test": "Caregiver Suite - 12. Patient Reminders (Denied)",
-    "timestamp": "2026-09-03T16:09:48.246Z",
+    "timestamp": "2026-09-05T14:10:53.744Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me/reminders",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -628,13 +628,13 @@
   },
   {
     "test": "Caregiver Suite - 13. Patient Medications (Denied)",
-    "timestamp": "2026-09-03T16:09:48.247Z",
+    "timestamp": "2026-09-05T14:10:53.750Z",
     "request": {
       "method": "GET",
       "url": "http://localhost:5000/patients/me/medications",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": null
     },
@@ -647,13 +647,13 @@
   },
   {
     "test": "Caregiver Suite - 14. Start Session (Denied)",
-    "timestamp": "2026-09-03T16:09:48.248Z",
+    "timestamp": "2026-09-05T14:10:53.753Z",
     "request": {
       "method": "POST",
       "url": "http://localhost:5000/activities/A101/sessions",
       "headers": {
         "Content-Type": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg0NTE3ODgsImV4cCI6MTc4ODUzODE4OH0.6a2vUOUCX9Y8IfHMz-bBD5xzznMQU9xMcxwFLp8tSI4"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkMwMDEiLCJlbWFpbCI6ImNhcmVnaXZlckBleGFtcGxlLmNvbSIsInJvbGUiOiJDQVJFR0lWRVIiLCJpYXQiOjE3ODg2MTc0NTMsImV4cCI6MTc4ODcwMzg1M30.ODwfuCOuh3INzLXM5fIy3GSi7sya2fO-zFetc6VakOc"
       },
       "body": {}
     },
