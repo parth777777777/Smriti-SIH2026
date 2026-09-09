@@ -7,6 +7,9 @@ since it's config data, not per-game logic.
 ACTIVITY_TARGET_TIME_MS = {
     "memory_match_v1": 15000,
     "grocery_recall_v1": 20000,
+    "pattern_sequence_v1": 18000,
+    "pattern_match_v1": 18000,
+    "word_pairing_v1": 25000,
 }
 
 

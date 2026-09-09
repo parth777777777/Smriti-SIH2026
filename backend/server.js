@@ -128,6 +128,11 @@ app.post('/activities/:id/sessions', authenticateToken, requireRole('PATIENT'), 
   });
 });
 
+// In-memory session history (V1 — resets on server restart).
+// Keyed by patient_id; each entry holds the full pipeline result so
+// both the patient dashboard and the caregiver view can read it.
+const sessionHistory = {};
+
 app.post('/activities/:id/sessions/:session_id/complete', authenticateToken, requireRole('PATIENT'), async (req, res) => {
   const { telemetry } = req.body;
 
@@ -135,35 +140,52 @@ app.post('/activities/:id/sessions/:session_id/complete', authenticateToken, req
     return res.status(400).json({ error: 'telemetry object is required' });
   }
 
+  const patientId = req.user.id;
+
   try {
-    const pyResponse = await fetch('http://127.0.0.1:8000/recommend-from-telemetry', {
+    // Forward to the V1 full-pipeline endpoint on the assessment engine.
+    const pyResponse = await fetch('http://127.0.0.1:8000/v1/process-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         profile: {
-          patient_id: MOCK_PATIENT.id,
+          patient_id: patientId,
           current_difficulty: MOCK_PATIENT.current_difficulty || 1
         },
-        raw_sessions: [telemetry]
+        raw_session: {
+          ...telemetry,
+          patient_id: patientId   // ensure patient_id is always present
+        }
       })
     });
 
     if (!pyResponse.ok) {
-      throw new Error(`FastAPI returned status ${pyResponse.status}`);
+      throw new Error(`FastAPI /v1/process-session returned ${pyResponse.status}`);
     }
 
-    const adaptation = await pyResponse.json();
+    const result = await pyResponse.json();
 
-    MOCK_PATIENT.current_difficulty = adaptation.new_difficulty;
-    MOCK_PATIENT.last_performance_score = adaptation.performance_score;
+    // Persist result in session history
+    if (!sessionHistory[patientId]) sessionHistory[patientId] = [];
+    sessionHistory[patientId].push({
+      session_id:   req.params.session_id,
+      activity_id:  req.params.id,
+      completed_at: new Date().toISOString(),
+      ...result
+    });
+
+    // Keep last-known performance score on the mock patient
+    if (result.domain_score?.score !== undefined) {
+      MOCK_PATIENT.last_performance_score = result.domain_score.score;
+    }
 
     res.json({
       session_id: req.params.session_id,
-      status: "COMPLETED",
-      ...adaptation
+      status: 'COMPLETED',
+      ...result
     });
   } catch (err) {
-    res.status(500).json({ error: 'FastAPI engine unreachable', details: err.message });
+    res.status(500).json({ error: 'Assessment engine unreachable', details: err.message });
   }
 });
 
@@ -197,6 +219,22 @@ app.get('/caregiver/alerts', authenticateToken, requireRole('CAREGIVER'), (req, 
   res.json(MOCK_ALERTS);
 });
 
+
+// ==========================================
+// 5. SESSION HISTORY
+// ==========================================
+
+// Patient reads their own session history
+app.get('/patients/me/session-history', authenticateToken, requireRole('PATIENT'), (req, res) => {
+  const history = sessionHistory[req.user.id] || [];
+  res.json(history);
+});
+
+// Caregiver reads a specific patient's session history
+app.get('/caregiver/patients/:id/session-history', authenticateToken, requireRole('CAREGIVER'), (req, res) => {
+  const history = sessionHistory[req.params.id] || [];
+  res.json(history);
+});
 
 
 // ==========================================
