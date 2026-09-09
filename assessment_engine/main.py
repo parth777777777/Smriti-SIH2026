@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
+from telemetry_extractors import extract_features
+from normalization import normalize_session
+
 
 app = FastAPI(title="Smriti Cognitive Adaptation Engine")
 
@@ -22,10 +25,7 @@ class AdaptationPayload(BaseModel):
 def health_check():
     return {"status": "ok"}
 
-@app.post("/recommend")
-def calculate_adaptation(payload: AdaptationPayload):
-    sessions = payload.sessions
-    current_diff = payload.profile.current_difficulty
+def _score_sessions(sessions: List[SessionData], current_diff: int) -> dict:
 
     if not sessions:
         return {
@@ -37,9 +37,8 @@ def calculate_adaptation(payload: AdaptationPayload):
 
     scores = []
     for s in sessions:
-        time_score = min(1.0, s.target_time_ms / max(1, s.response_time_ms))
-        error_penalty = min(1.0, s.error_count / 5.0)
-        p_score = (0.50 * s.accuracy) + (0.30 * time_score) - (0.20 * error_penalty)
+        n = normalize_session(s.accuracy, s.response_time_ms, s.target_time_ms, s.error_count)
+        p_score = (0.50 * n["accuracy_score"]) + (0.30 * n["time_score"]) - (0.20 * n["error_penalty"])
         scores.append(p_score)
 
     avg_performance = sum(scores) / len(scores)
@@ -57,3 +56,28 @@ def calculate_adaptation(payload: AdaptationPayload):
         "recommended_activity": "RECALL_SIMPLE" if avg_performance < 0.50 else "PATTERN_MATCH",
         "trigger_alert": avg_performance < 0.40
     }
+
+class RawSessionTelemetry(BaseModel):
+    session_id: str
+    patient_id: str
+    activity_id: str
+    started_at: str
+    ended_at: str
+    events: List[dict]
+
+
+class RecommendFromTelemetryPayload(BaseModel):
+    profile: PatientProfile
+    raw_sessions: List[RawSessionTelemetry]
+
+@app.post("/recommend")
+def calculate_adaptation(payload: AdaptationPayload):
+    return _score_sessions(payload.sessions, payload.profile.current_difficulty)
+
+@app.post("/recommend-from-telemetry")
+def calculate_adaptation_from_telemetry(payload: RecommendFromTelemetryPayload):
+    sessions = [
+        SessionData(**extract_features(rs.dict()))
+        for rs in payload.raw_sessions
+    ]
+    return _score_sessions(sessions, payload.profile.current_difficulty)

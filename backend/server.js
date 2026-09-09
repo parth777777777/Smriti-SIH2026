@@ -128,15 +128,43 @@ app.post('/activities/:id/sessions', authenticateToken, requireRole('PATIENT'), 
   });
 });
 
-app.post('/activities/:id/sessions/:session_id/complete', authenticateToken, requireRole('PATIENT'), (req, res) => {
-  const { score } = req.body;
+app.post('/activities/:id/sessions/:session_id/complete', authenticateToken, requireRole('PATIENT'), async (req, res) => {
+  const { telemetry } = req.body;
 
-  res.json({
-    session_id: req.params.session_id,
-    status: "COMPLETED",
-    score: typeof score === 'number' ? score : (parseInt(score, 10) || 0),
-    adaptation_next_level: "MEDIUM"
-  });
+  if (!telemetry) {
+    return res.status(400).json({ error: 'telemetry object is required' });
+  }
+
+  try {
+    const pyResponse = await fetch('http://127.0.0.1:8000/recommend-from-telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        profile: {
+          patient_id: MOCK_PATIENT.id,
+          current_difficulty: MOCK_PATIENT.current_difficulty || 1
+        },
+        raw_sessions: [telemetry]
+      })
+    });
+
+    if (!pyResponse.ok) {
+      throw new Error(`FastAPI returned status ${pyResponse.status}`);
+    }
+
+    const adaptation = await pyResponse.json();
+
+    MOCK_PATIENT.current_difficulty = adaptation.new_difficulty;
+    MOCK_PATIENT.last_performance_score = adaptation.performance_score;
+
+    res.json({
+      session_id: req.params.session_id,
+      status: "COMPLETED",
+      ...adaptation
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'FastAPI engine unreachable', details: err.message });
+  }
 });
 
 // ==========================================
