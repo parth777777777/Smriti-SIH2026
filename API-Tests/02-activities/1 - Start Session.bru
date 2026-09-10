@@ -1,0 +1,19 @@
+meta {
+  name: 1 - Start Session
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{node_url}}/activities/memory_match_v1/sessions
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  bru.setEnvVar("session_id", res.body.session_id);
+}

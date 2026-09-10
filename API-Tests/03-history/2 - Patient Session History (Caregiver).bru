@@ -1,0 +1,15 @@
+meta {
+  name: 2 - Patient Session History (Caregiver)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{node_url}}/caregiver/patients/P001/session-history
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{caregiver_token}}
+}

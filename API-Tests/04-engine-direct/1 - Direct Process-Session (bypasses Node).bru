@@ -1,0 +1,33 @@
+meta {
+  name: 1 - Direct Process-Session (bypasses Node)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{python_url}}/v1/process-session
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "profile": {
+      "patient_id": "P001",
+      "current_difficulty": 1
+    },
+    "raw_session": {
+      "session_id": "direct-test-001",
+      "patient_id": "P001",
+      "activity_id": "memory_match_v1",
+      "num_pairs": 4,
+      "started_at": "2026-09-09T19:00:00Z",
+      "ended_at": "2026-09-09T19:00:12Z",
+      "events": [
+        { "event": "card_selected", "timestamp": 1725735600000, "card_id": "c1", "position": 0 },
+        { "event": "card_selected", "timestamp": 1725735600500, "card_id": "c2", "position": 1 },
+        { "event": "match_result", "timestamp": 1725735600600, "card_1": "c1", "card_2": "c2", "is_match": true }
+      ]
+    }
+  }
+}

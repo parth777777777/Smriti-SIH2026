@@ -1,0 +1,41 @@
+meta {
+  name: 2a - Complete Session (Good Performance)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{node_url}}/activities/memory_match_v1/sessions/{{session_id}}/complete
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "telemetry": {
+      "session_id": "{{session_id}}",
+      "activity_id": "memory_match_v1",
+      "num_pairs": 4,
+      "started_at": "2026-09-09T19:00:00Z",
+      "ended_at": "2026-09-09T19:00:12Z",
+      "events": [
+        { "event": "card_selected", "timestamp": 1725735600000, "card_id": "c1", "position": 0 },
+        { "event": "card_selected", "timestamp": 1725735600500, "card_id": "c2", "position": 1 },
+        { "event": "match_result", "timestamp": 1725735600600, "card_1": "c1", "card_2": "c2", "is_match": true },
+        { "event": "card_selected", "timestamp": 1725735601000, "card_id": "c3", "position": 2 },
+        { "event": "card_selected", "timestamp": 1725735601500, "card_id": "c4", "position": 3 },
+        { "event": "match_result", "timestamp": 1725735601600, "card_1": "c3", "card_2": "c4", "is_match": true },
+        { "event": "card_selected", "timestamp": 1725735602000, "card_id": "c5", "position": 4 },
+        { "event": "card_selected", "timestamp": 1725735602500, "card_id": "c6", "position": 5 },
+        { "event": "match_result", "timestamp": 1725735602600, "card_1": "c5", "card_2": "c6", "is_match": true },
+        { "event": "card_selected", "timestamp": 1725735603000, "card_id": "c7", "position": 6 },
+        { "event": "card_selected", "timestamp": 1725735603500, "card_id": "c8", "position": 7 },
+        { "event": "match_result", "timestamp": 1725735603600, "card_1": "c7", "card_2": "c8", "is_match": true }
+      ]
+    }
+  }
+}

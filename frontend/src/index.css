@@ -1,0 +1,363 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+
+/* ── Responsive app viewport ── */
+html, body, #root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+html {
+  background: #E5F2F8;
+}
+
+body {
+  background: #E5F2F8;
+  font-family: 'Nunito', sans-serif;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* The app uses the browser/device viewport directly.
+   No simulated phone frame, bezel, or Dynamic Island is added here. */
+#root {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #E5F2F8;
+}
+
+/* On larger screens, keep the content comfortable without recreating a
+   device mockup. Individual screens/components can remain responsive. */
+@media (min-width: 700px) {
+  #root {
+    min-height: 100dvh;
+  }
+}
+
+/* ── Card elevation tokens ── */
+.card-sm  { box-shadow: 0 3px 14px rgba(37,40,61,0.09), 0 1px 4px rgba(37,40,61,0.05); }
+.card-md  { box-shadow: 0 5px 22px rgba(37,40,61,0.11), 0 1px 5px rgba(37,40,61,0.06); }
+.card-lg  { box-shadow: 0 8px 32px rgba(37,40,61,0.13), 0 2px 8px rgba(37,40,61,0.07); }
+
+/* ── Scrollbars hidden ── */
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; }
+
+/* ── Memory Match animations ── */
+@keyframes mm-shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  18%  { transform: translateX(-6px) rotate(-1.5deg); }
+  36%  { transform: translateX(6px) rotate(1.5deg); }
+  54%  { transform: translateX(-4px) rotate(-0.8deg); }
+  72%  { transform: translateX(4px) rotate(0.8deg); }
+}
+@keyframes mm-match-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(139,123,200,0.7), 0 6px 20px rgba(139,123,200,0.15); }
+  50%  { box-shadow: 0 0 0 8px rgba(139,123,200,0.2), 0 6px 20px rgba(139,123,200,0.2);  }
+  100% { box-shadow: 0 0 0 3px rgba(139,123,200,0.5), 0 6px 20px rgba(139,123,200,0.18); }
+}
+@keyframes mm-popup-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+@keyframes mm-mismatch-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0);      }
+}
+.mm-shake   { animation: mm-shake 0.44s ease-in-out; }
+.mm-matched { animation: mm-match-pulse 0.65s ease-out forwards; }
+.mm-popup   { animation: mm-popup-in 0.38s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.mm-mismatch-hint { animation: mm-mismatch-in 0.3s ease-out forwards; }
+
+/* ── Input/select appearance ── */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Adaptive layout system
+   The browser viewport is the app viewport. These rules intentionally avoid
+   a global max-width/mobile canvas and let each screen reflow from its
+   available width.
+   ────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-width: 0;
+  width: 100%;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+.smriti-app-root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+.smriti-screen {
+  width: 100%;
+  min-width: 0;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.responsive-scroll {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+
+.responsive-scroll > * {
+  min-width: 0;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, p, span, button, label {
+  overflow-wrap: anywhere;
+}
+
+/* Mobile: use the viewport, with compact one-column content where practical. */
+.splash-illustration {
+  width: min(78vw, 300px);
+  height: auto;
+  aspect-ratio: 300 / 270;
+  flex: 0 1 auto;
+}
+
+.splash-illustration > svg,
+.splash-illustration svg {
+  width: 100%;
+  height: 100%;
+}
+
+.splash-title {
+  font-size: clamp(26px, 7vw, 34px) !important;
+  line-height: 1.12;
+}
+
+.splash-main {
+  min-width: 0;
+}
+
+.splash-actions {
+  width: 100%;
+}
+
+.adaptive-grid {
+  min-width: 0;
+  width: 100%;
+}
+
+.adaptive-grid > * {
+  min-width: 0;
+}
+
+@media (max-width: 599px) {
+  .responsive-scroll {
+    padding-left: clamp(16px, 5vw, 24px) !important;
+    padding-right: clamp(16px, 5vw, 24px) !important;
+  }
+
+  .home-activities-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grocery-list-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .result-pairs-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .splash-main {
+    padding-left: clamp(18px, 6vw, 28px) !important;
+    padding-right: clamp(18px, 6vw, 28px) !important;
+  }
+
+  .splash-actions {
+    padding-left: clamp(18px, 5vw, 28px) !important;
+    padding-right: clamp(18px, 5vw, 28px) !important;
+    padding-bottom: max(24px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .splash-title-row {
+    max-width: 100%;
+  }
+
+  .splash-title-row h1 {
+    min-width: 0;
+  }
+}
+
+/* Tablet and up: content expands into the real viewport rather than
+   retaining phone-width cards. */
+@media (min-width: 600px) {
+  .responsive-scroll {
+    padding-left: clamp(24px, 4vw, 64px) !important;
+    padding-right: clamp(24px, 4vw, 64px) !important;
+  }
+
+  .home-activities-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .recall-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .recall-choice-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .result-pairs-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .grocery-list-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .splash-illustration {
+    width: clamp(300px, 40vw, 460px);
+  }
+
+  .splash-title {
+    font-size: clamp(30px, 3.4vw, 42px) !important;
+  }
+
+  .splash-actions {
+    padding-left: clamp(24px, 6vw, 80px) !important;
+    padding-right: clamp(24px, 6vw, 80px) !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .splash-main {
+    display: grid !important;
+    grid-template-columns: minmax(300px, 1.15fr) minmax(300px, 0.85fr);
+    grid-template-rows: auto auto auto auto;
+    align-items: center;
+    justify-items: center;
+    column-gap: clamp(24px, 5vw, 80px);
+    row-gap: clamp(6px, 1vw, 14px);
+    padding-left: clamp(32px, 7vw, 96px) !important;
+    padding-right: clamp(32px, 7vw, 96px) !important;
+  }
+
+  .splash-illustration {
+    grid-column: 1;
+    grid-row: 1 / 5;
+    margin-bottom: 0 !important;
+    width: min(44vw, 500px);
+  }
+
+  .splash-title-row,
+  .splash-main > p {
+    grid-column: 2;
+  }
+
+  .splash-title-row {
+    grid-row: 2;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .splash-main > p:nth-of-type(1) {
+    grid-row: 3;
+    max-width: min(38vw, 420px) !important;
+    font-size: clamp(16px, 1.5vw, 20px) !important;
+  }
+
+  .splash-main > p:nth-of-type(2) {
+    grid-row: 4;
+  }
+
+  .splash-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(12px, 2vw, 24px) !important;
+    padding-top: clamp(16px, 2vw, 28px) !important;
+    padding-bottom: clamp(24px, 3vw, 44px) !important;
+  }
+
+  .splash-actions button {
+    width: 100% !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .object-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-scroll {
+    padding-left: clamp(40px, 6vw, 96px) !important;
+    padding-right: clamp(40px, 6vw, 96px) !important;
+  }
+
+  .home-activities-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .recall-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .recall-choice-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .result-pairs-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+
+  .splash-main {
+    column-gap: clamp(48px, 7vw, 120px);
+  }
+}
+
+/* Wider game board: use four cards per row once there is tablet space,
+   while retaining two comfortable columns on phones. */
+@media (min-width: 768px) {
+  .smriti-screen:has(.mm-board) .responsive-scroll > div {
+    min-width: 0;
+  }
+}
+
+/* Prevent long flex children from forcing horizontal overflow. */
+.flex-1, .min-w-0 {
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

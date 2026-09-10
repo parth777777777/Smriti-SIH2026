@@ -1,0 +1,15 @@
+meta {
+  name: 1 - My Session History (Patient)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{node_url}}/patients/me/session-history
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
