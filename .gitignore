@@ -27,12 +27,14 @@ pnpm-debug.log*
 lerna-debug.log*
 .npm/
 .eslintcache
+*.tsbuildinfo
 dist/
+dist-ssr/
 build/
 out/
 
 # ==========================================
-# Python / FastAPI (ai_engine)
+# Python / FastAPI (assessment_engine)
 # ==========================================
 # Byte-compiled / optimized files
 __pycache__/
@@ -57,6 +59,7 @@ htmlcov/
 
 # Distribution / Packaging
 *.egg-info/
+.eggs/
 .installed.cfg
 *.egg
 
@@ -105,3 +108,15 @@ logs/
 *.log
 *.tmp
 *.temp
+
+# ==========================================
+# Frontend (Vite/React)
+# ==========================================
+.vite/
+*.local
+
+# ==========================================
+# Misc project artifacts
+# ==========================================
+api-test-results.json
+api_test_requests_responses.json
