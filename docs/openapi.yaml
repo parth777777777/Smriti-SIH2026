@@ -1,0 +1,1290 @@
+openapi: 3.1.0
+info:
+  title: Smriti V1 API
+  version: 1.0.0
+  description: |
+    Canonical frontend-facing API specification for the Smriti cognitive healthcare platform.
+    
+    This API is served by the Node.js / Express backend (`http://localhost:5000`) and orchestrates
+    authentication, patient data, activity sessions, and internal routing to the Python
+    Cognitive Assessment Engine.
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User authentication and token issuance
+  - name: Patient
+    description: Authenticated patient profile, progress, routines, and session history
+  - name: Activities
+    description: Cognitive games, session lifecycle, and telemetry evaluation
+  - name: Caregiver
+    description: Caregiver dashboard, managed patients, alerts, and historical monitoring
+  - name: Legacy & Internal
+    description: Internal or legacy routes not intended for direct standard client use
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: |
+        Authenticates a user via email and returns a signed 24-hour JWT Bearer token and user details.
+      operationId: loginUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: patient@example.com
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              example:
+                access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                token_type: bearer
+                user:
+                  id: P001
+                  name: John Doe
+                  email: patient@example.com
+                  role: PATIENT
+
+  /patients/me:
+    get:
+      tags:
+        - Patient
+      summary: Get authenticated patient profile
+      description: Retrieves the profile, diagnosis, and activity summary for the logged-in patient.
+      operationId: getPatientProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Patient profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientProfile'
+              example:
+                id: P001
+                name: John Doe
+                email: patient@example.com
+                age: 72
+                diagnosis: Mild Cognitive Impairment
+                activities_completed: 14
+                current_streak: 5
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /patients/me/progress:
+    get:
+      tags:
+        - Patient
+      summary: Get patient activity progress
+      description: Returns overall activity completion count and current daily streak for the authenticated patient.
+      operationId: getPatientProgress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Patient activity progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientProgress'
+              example:
+                activities_completed: 14
+                current_streak: 5
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /patients/me/reminders:
+    get:
+      tags:
+        - Patient
+      summary: Get patient reminders
+      description: Retrieves daily scheduled reminders (hydration, walks, etc.) for the authenticated patient.
+      operationId: getPatientReminders
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of scheduled reminders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reminder'
+              example:
+                - id: R01
+                  title: Drink Water
+                  time: 02:00 PM
+                  status: PENDING
+                - id: R02
+                  title: Evening Walk
+                  time: 05:00 PM
+                  status: PENDING
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /patients/me/medications:
+    get:
+      tags:
+        - Patient
+      summary: Get patient medication schedule
+      description: Retrieves the daily medication schedule and adherence status for the authenticated patient.
+      operationId: getPatientMedications
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of prescribed medications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Medication'
+              example:
+                - id: M01
+                  name: Donepezil
+                  dosage: 5mg
+                  time: 08:00 AM
+                  taken: true
+                - id: M02
+                  name: Memantine
+                  dosage: 10mg
+                  time: 08:00 PM
+                  taken: false
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /patients/me/session-history:
+    get:
+      tags:
+        - Patient
+      summary: Get patient completed session assessments
+      description: Retrieves all completed session cognitive assessment evaluations for the authenticated patient.
+      operationId: getPatientSessionHistory
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of past session assessment evaluations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssessmentResult'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /activities:
+    get:
+      tags:
+        - Activities
+      summary: List activities
+      description: Retrieves all available cognitive activities and games.
+      operationId: listActivities
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+              example:
+                - id: A101
+                  title: Pattern Match
+                  category: Pattern Recognition
+                  duration_minutes: 5
+                  difficulty_level: EASY
+                - id: A102
+                  title: Daily Routine Recall
+                  category: Memory & Recall
+                  duration_minutes: 10
+                  difficulty_level: EASY
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /activities/{id}:
+    get:
+      tags:
+        - Activities
+      summary: Get activity details
+      description: Retrieves metadata for a specific activity.
+      operationId: getActivityById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The activity identifier (e.g. A101, memory_match_v1)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Activity details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activity'
+              example:
+                id: A101
+                title: Pattern Match
+                category: Pattern Recognition
+                duration_minutes: 5
+                difficulty_level: EASY
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /activities/{id}/sessions:
+    post:
+      tags:
+        - Activities
+      summary: Start activity session
+      description: Initializes a new gameplay session and generates a unique `session_id`.
+      operationId: startActivitySession
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The activity identifier (e.g. memory_match_v1)
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Session successfully started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStartResponse'
+              example:
+                session_id: S_1788982858810
+                activity_id: memory_match_v1
+                status: STARTED
+                started_at: '2026-09-09T19:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /activities/{id}/sessions/{session_id}/complete:
+    post:
+      tags:
+        - Activities
+      summary: Complete activity session and evaluate telemetry
+      description: |
+        Submits gameplay telemetry to the backend, forwards it to the Python Cognitive Assessment Engine,
+        records the result in session history, and returns the full 7-stage assessment evaluation.
+      operationId: completeActivitySession
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The activity identifier (e.g. memory_match_v1)
+          schema:
+            type: string
+        - name: session_id
+          in: path
+          required: true
+          description: The session identifier created during session start
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteSessionRequest'
+            example:
+              telemetry:
+                session_id: S_1788982858810
+                activity_id: memory_match_v1
+                num_pairs: 4
+                started_at: '2026-09-07T19:00:00Z'
+                ended_at: '2026-09-07T19:01:24Z'
+                events:
+                  - event: card_selected
+                    timestamp: 1725735605123
+                    card_id: card_7
+                    position: 7
+                  - event: card_selected
+                    timestamp: 1725735606710
+                    card_id: card_2
+                    position: 2
+                  - event: match_result
+                    timestamp: 1725735606725
+                    card_1: card_7
+                    card_2: card_2
+                    is_match: false
+                  - event: card_selected
+                    timestamp: 1725735612010
+                    card_id: card_7
+                    position: 7
+                  - event: card_selected
+                    timestamp: 1725735613400
+                    card_id: card_5
+                    position: 5
+                  - event: match_result
+                    timestamp: 1725735613415
+                    card_1: card_7
+                    card_2: card_5
+                    is_match: true
+      responses:
+        '200':
+          description: Session successfully evaluated and persisted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResult'
+        '400':
+          description: Missing or malformed telemetry payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject'
+              example:
+                error: telemetry object is required
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          description: Internal server error or assessment engine unreachable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorWithDetails'
+              example:
+                error: Assessment engine unreachable
+                details: fetch failed
+
+  /caregiver/patients:
+    get:
+      tags:
+        - Caregiver
+      summary: List managed patients
+      description: Returns all patients assigned to the authenticated caregiver.
+      operationId: listCaregiverPatients
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of patient profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientProfile'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /caregiver/patients/{id}:
+    get:
+      tags:
+        - Caregiver
+      summary: Get patient details
+      description: Retrieves detailed patient information for a specific patient ID.
+      operationId: getCaregiverPatientById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Patient ID (e.g. P001)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Patient profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientProfile'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /caregiver/patients/{id}/session-history:
+    get:
+      tags:
+        - Caregiver
+      summary: Get patient session history
+      description: Retrieves complete cognitive assessment session evaluations for a specific patient.
+      operationId: getCaregiverPatientSessionHistory
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Patient ID (e.g. P001)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Array of session assessment results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssessmentResult'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /caregiver/patients/{id}/history:
+    get:
+      tags:
+        - Caregiver
+      summary: Get patient historical activity scores
+      description: Retrieves historical activity completion records with legacy score values.
+      operationId: getCaregiverPatientHistory
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Patient ID (e.g. P001)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Array of historical activity records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaregiverHistoricalRecord'
+              example:
+                - date: '2026-09-02'
+                  activity: Pattern Match
+                  score: 90
+                - date: '2026-09-03'
+                  activity: Daily Routine Recall
+                  score: 80
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /caregiver/patients/{id}/progress:
+    get:
+      tags:
+        - Caregiver
+      summary: Get patient progress overview
+      description: Retrieves weekly activity completion rate and general cognitive memory trend.
+      operationId: getCaregiverPatientProgress
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Patient ID (e.g. P001)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Caregiver summary progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaregiverProgress'
+              example:
+                weekly_completion_rate: 85%
+                memory_trend: Stable
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /caregiver/patients/{id}/medications:
+    get:
+      tags:
+        - Caregiver
+      summary: Get patient medications
+      description: Retrieves medication schedules and adherence for a managed patient.
+      operationId: getCaregiverPatientMedications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Patient ID (e.g. P001)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of patient medications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Medication'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /caregiver/alerts:
+    get:
+      tags:
+        - Caregiver
+      summary: List caregiver alerts
+      description: Retrieves active notifications and missed activity alerts for managed patients.
+      operationId: listCaregiverAlerts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of active alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+              example:
+                - id: ALT01
+                  patient_id: P001
+                  type: MISSED_ACTIVITY
+                  message: Missed 2:00 PM Hydration Reminder
+                  timestamp: '2026-09-09T19:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedMessage'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /activities/evaluate-session:
+    post:
+      tags:
+        - Legacy & Internal
+      summary: (Legacy / Internal) Evaluate session adaptation
+      description: |
+        Internal/legacy endpoint that directly forwards pre-extracted session scores to FastAPI `/recommend`
+        for rule-based difficulty adjustment. Not recommended for V1 gameplay flow.
+      operationId: evaluateSessionAdaptation
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluateSessionRequest'
+      responses:
+        '200':
+          description: Adaptation recommendation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluateSessionResponse'
+        '500':
+          description: Assessment engine unreachable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorWithDetails'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supply the 24-hour access token returned by POST /auth/login
+
+  responses:
+    UnauthorizedMessage:
+      description: Access token missing or invalid format
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageObject'
+          example:
+            message: Access token missing or invalid format
+    ForbiddenError:
+      description: Invalid token or insufficient role permissions
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/MessageObject'
+              - $ref: '#/components/schemas/ErrorObject'
+          examples:
+            expiredToken:
+              summary: Expired or invalid token
+              value:
+                message: Invalid or expired token
+            insufficientRole:
+              summary: Insufficient role permissions
+              value:
+                error: 'Forbidden: Insufficient permissions'
+
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - role
+      properties:
+        id:
+          type: string
+          example: P001
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: patient@example.com
+        role:
+          type: string
+          enum: [PATIENT, CAREGIVER]
+          example: PATIENT
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: patient@example.com
+
+    LoginResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - user
+      properties:
+        access_token:
+          type: string
+          description: 24-hour JSON Web Token
+        token_type:
+          type: string
+          example: bearer
+        user:
+          $ref: '#/components/schemas/User'
+
+    PatientProfile:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - age
+        - diagnosis
+        - activities_completed
+        - current_streak
+      properties:
+        id:
+          type: string
+          example: P001
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: patient@example.com
+        age:
+          type: integer
+          example: 72
+        diagnosis:
+          type: string
+          example: Mild Cognitive Impairment
+        activities_completed:
+          type: integer
+          example: 14
+        current_streak:
+          type: integer
+          example: 5
+
+    PatientProgress:
+      type: object
+      required:
+        - activities_completed
+        - current_streak
+      properties:
+        activities_completed:
+          type: integer
+          example: 14
+        current_streak:
+          type: integer
+          example: 5
+
+    Reminder:
+      type: object
+      required:
+        - id
+        - title
+        - time
+        - status
+      properties:
+        id:
+          type: string
+          example: R01
+        title:
+          type: string
+          example: Drink Water
+        time:
+          type: string
+          example: 02:00 PM
+        status:
+          type: string
+          example: PENDING
+
+    Medication:
+      type: object
+      required:
+        - id
+        - name
+        - dosage
+        - time
+        - taken
+      properties:
+        id:
+          type: string
+          example: M01
+        name:
+          type: string
+          example: Donepezil
+        dosage:
+          type: string
+          example: 5mg
+        time:
+          type: string
+          example: 08:00 AM
+        taken:
+          type: boolean
+          example: true
+
+    Activity:
+      type: object
+      required:
+        - id
+        - title
+        - category
+        - duration_minutes
+        - difficulty_level
+      properties:
+        id:
+          type: string
+          example: A101
+        title:
+          type: string
+          example: Pattern Match
+        category:
+          type: string
+          example: Pattern Recognition
+        duration_minutes:
+          type: integer
+          example: 5
+        difficulty_level:
+          type: string
+          example: EASY
+
+    SessionStartResponse:
+      type: object
+      required:
+        - session_id
+        - activity_id
+        - status
+        - started_at
+      properties:
+        session_id:
+          type: string
+          example: S_1788982858810
+        activity_id:
+          type: string
+          example: memory_match_v1
+        status:
+          type: string
+          example: STARTED
+        started_at:
+          type: string
+          format: date-time
+          example: '2026-09-09T19:00:00.000Z'
+
+    CardSelectedEvent:
+      type: object
+      required:
+        - event
+        - timestamp
+        - card_id
+        - position
+      properties:
+        event:
+          type: string
+          enum: [card_selected]
+          example: card_selected
+        timestamp:
+          type: integer
+          description: Unix epoch milliseconds
+          example: 1725735605123
+        card_id:
+          type: string
+          example: card_7
+        position:
+          type: integer
+          example: 7
+
+    MatchResultEvent:
+      type: object
+      required:
+        - event
+        - timestamp
+        - card_1
+        - card_2
+        - is_match
+      properties:
+        event:
+          type: string
+          enum: [match_result]
+          example: match_result
+        timestamp:
+          type: integer
+          description: Unix epoch milliseconds
+          example: 1725735606725
+        card_1:
+          type: string
+          example: card_7
+        card_2:
+          type: string
+          example: card_2
+        is_match:
+          type: boolean
+          example: false
+
+    MemoryMatchTelemetry:
+      type: object
+      required:
+        - session_id
+        - activity_id
+        - num_pairs
+        - started_at
+        - ended_at
+        - events
+      properties:
+        session_id:
+          type: string
+          example: S_1788982858810
+        patient_id:
+          type: string
+          description: Optional (backend automatically populates from JWT if omitted)
+          example: P001
+        activity_id:
+          type: string
+          example: memory_match_v1
+        num_pairs:
+          type: integer
+          minimum: 1
+          description: Total pairs on the game board (authoritative source for pairs_presented)
+          example: 4
+        started_at:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp
+          example: '2026-09-07T19:00:00Z'
+        ended_at:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC timestamp
+          example: '2026-09-07T19:01:24Z'
+        events:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/CardSelectedEvent'
+              - $ref: '#/components/schemas/MatchResultEvent'
+
+    CompleteSessionRequest:
+      type: object
+      required:
+        - telemetry
+      properties:
+        telemetry:
+          $ref: '#/components/schemas/MemoryMatchTelemetry'
+
+    AssessmentFeatures:
+      type: object
+      required:
+        - accuracy
+        - response_time_ms
+        - target_time_ms
+        - error_count
+        - pairs_presented
+        - pairs_recalled
+        - repeated_selections
+        - mean_inter_response_time_ms
+      properties:
+        accuracy:
+          type: number
+          format: float
+          example: 0.5
+        response_time_ms:
+          type: integer
+          example: 84000
+        target_time_ms:
+          type: integer
+          example: 15000
+        error_count:
+          type: integer
+          example: 1
+        pairs_presented:
+          type: integer
+          example: 4
+        pairs_recalled:
+          type: integer
+          example: 1
+        repeated_selections:
+          type: integer
+          example: 1
+        mean_inter_response_time_ms:
+          type: number
+          format: float
+          example: 2759.0
+
+    NormalizedFeatures:
+      type: object
+      required:
+        - recall_score
+        - accuracy_score
+        - repetition_score
+        - efficiency_score
+      properties:
+        recall_score:
+          type: number
+          format: float
+          example: 0.25
+        accuracy_score:
+          type: number
+          format: float
+          example: 0.5
+        repetition_score:
+          type: number
+          format: float
+          example: 0.875
+        efficiency_score:
+          type: number
+          format: float
+          example: 0.1786
+
+    ScoreComponents:
+      type: object
+      required:
+        - recall
+        - accuracy
+        - repetition_efficiency
+        - temporal_efficiency
+      properties:
+        recall:
+          type: number
+          format: float
+          example: 0.25
+        accuracy:
+          type: number
+          format: float
+          example: 0.5
+        repetition_efficiency:
+          type: number
+          format: float
+          example: 0.875
+        temporal_efficiency:
+          type: number
+          format: float
+          example: 0.1786
+
+    DomainScore:
+      type: object
+      required:
+        - score
+        - score_components
+      properties:
+        score:
+          type: number
+          format: float
+          example: 0.408
+        score_components:
+          $ref: '#/components/schemas/ScoreComponents'
+
+    Baseline:
+      type: object
+      nullable: true
+      required:
+        - n_sessions
+        - mean
+        - std_dev
+      properties:
+        n_sessions:
+          type: integer
+          example: 2
+        mean:
+          type: number
+          format: float
+          example: 0.7884
+        std_dev:
+          type: number
+          format: float
+          example: 0.1366
+
+    Deviation:
+      type: object
+      nullable: true
+      required:
+        - z_score
+        - direction
+      properties:
+        z_score:
+          type: number
+          format: float
+          example: -1.0
+        direction:
+          type: string
+          enum: [ABOVE_BASELINE, BELOW_BASELINE]
+          example: BELOW_BASELINE
+
+    LongitudinalResult:
+      type: object
+      required:
+        - trend
+        - persistent
+        - status
+      properties:
+        trend:
+          type: string
+          enum: [INSUFFICIENT_DATA, IMPROVING, DECLINING, STABLE]
+          example: DECLINING
+        persistent:
+          type: boolean
+          example: false
+        status:
+          type: string
+          enum: [OK, REVIEW_FLAG]
+          description: REVIEW_FLAG indicates persistent below-baseline performance requiring clinical review (not a medical diagnosis).
+          example: OK
+
+    AssessmentResult:
+      type: object
+      required:
+        - session_id
+        - status
+        - domain
+        - features
+        - normalized_features
+        - domain_score
+        - baseline
+        - deviation
+        - longitudinal
+      properties:
+        session_id:
+          type: string
+          example: S_1788982858810
+        activity_id:
+          type: string
+          example: memory_match_v1
+        completed_at:
+          type: string
+          format: date-time
+          example: '2026-09-09T19:16:06.081Z'
+        status:
+          type: string
+          example: COMPLETED
+        domain:
+          type: string
+          example: MEMORY
+        features:
+          $ref: '#/components/schemas/AssessmentFeatures'
+        normalized_features:
+          $ref: '#/components/schemas/NormalizedFeatures'
+        domain_score:
+          $ref: '#/components/schemas/DomainScore'
+        baseline:
+          $ref: '#/components/schemas/Baseline'
+        deviation:
+          $ref: '#/components/schemas/Deviation'
+        longitudinal:
+          $ref: '#/components/schemas/LongitudinalResult'
+
+    Alert:
+      type: object
+      required:
+        - id
+        - patient_id
+        - type
+        - message
+        - timestamp
+      properties:
+        id:
+          type: string
+          example: ALT01
+        patient_id:
+          type: string
+          example: P001
+        type:
+          type: string
+          example: MISSED_ACTIVITY
+        message:
+          type: string
+          example: Missed 2:00 PM Hydration Reminder
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-09-09T19:00:00.000Z'
+
+    CaregiverProgress:
+      type: object
+      required:
+        - weekly_completion_rate
+        - memory_trend
+      properties:
+        weekly_completion_rate:
+          type: string
+          example: 85%
+        memory_trend:
+          type: string
+          example: Stable
+
+    CaregiverHistoricalRecord:
+      type: object
+      required:
+        - date
+        - activity
+        - score
+      properties:
+        date:
+          type: string
+          format: date
+          example: '2026-09-02'
+        activity:
+          type: string
+          example: Pattern Match
+        score:
+          type: integer
+          example: 90
+
+    EvaluateSessionRequest:
+      type: object
+      required:
+        - patient_id
+      properties:
+        patient_id:
+          type: string
+          example: P001
+        recent_sessions:
+          type: array
+          items:
+            type: object
+            properties:
+              accuracy:
+                type: number
+              response_time_ms:
+                type: integer
+              target_time_ms:
+                type: integer
+              error_count:
+                type: integer
+
+    EvaluateSessionResponse:
+      type: object
+      required:
+        - status
+        - adaptation
+      properties:
+        status:
+          type: string
+          example: success
+        adaptation:
+          type: object
+          properties:
+            new_difficulty:
+              type: integer
+            performance_score:
+              type: number
+            recommended_activity:
+              type: string
+            trigger_alert:
+              type: boolean
+        updated_mock_patient:
+          type: object
+
+    MessageObject:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Access token missing or invalid format
+
+    ErrorObject:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: 'Forbidden: Insufficient permissions'
+
+    ErrorWithDetails:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Assessment engine unreachable
+        details:
+          type: string
+          example: fetch failed

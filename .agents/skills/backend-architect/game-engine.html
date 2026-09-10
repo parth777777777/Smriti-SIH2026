@@ -1,0 +1,655 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>game-engine</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+      
+<ul>
+<li><a href="#smriti-v1-—-complete-flow">Smriti V1 — Complete Flow</a></li>
+<li><a href="#game-configuration">1. Game Configuration</a></li>
+<li><a href="#game-session-begins">2. Game Session Begins</a></li>
+<li><a href="#raw-telemetry">3. Raw Telemetry</a></li>
+<li><a href="#why-raw-telemetry-matters">4. Why Raw Telemetry Matters</a></li>
+<li><a href="#feature-extraction">5. Feature Extraction</a></li>
+<li><a href="#what-each-feature-means">6. What Each Feature Means</a>
+<ul>
+<li></li>
+</ul>
+</li>
+<li><a href="#feature-normalization">7. Feature Normalization</a></li>
+<li><a href="#domain-scoring">8. Domain Scoring</a></li>
+<li><a href="#store-the-session-result">9. Store the Session Result</a></li>
+<li><a href="#building-the-personalized-baseline">10. Building the Personalized Baseline</a></li>
+<li><a href="#practice-effects">11. Practice Effects</a></li>
+<li><a href="#new-session">12. New Session</a></li>
+<li><a href="#longitudinal-drift-detection">13. Longitudinal Drift Detection</a></li>
+<li><a href="#the-whole-data-flow">14. The Whole Data Flow</a>
+<ul>
+<li></li>
+</ul>
+</li>
+<li><a href="#what-v1-has-actually-built">15. What V1 Has Actually Built</a></li>
+</ul>
+
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <p>Let’s make the <strong>entire V1 pipeline concrete</strong> using Memory Match, with actual JSON flowing through each stage.</p>
+<p>The key idea is that we should <strong>not jump directly from gameplay → score</strong>. V1 has several transformations.</p>
+<hr>
+<h1 id="smriti-v1-—-complete-flow">Smriti V1 — Complete Flow</h1>
+<pre class=" language-text"><code class="prism  language-text">PATIENT
+   ↓
+MEMORY MATCH GAME
+   ↓
+RAW TELEMETRY
+   ↓
+FEATURE EXTRACTION
+   ↓
+FEATURE NORMALIZATION
+   ↓
+MEMORY DOMAIN SCORE
+   ↓
+PERSONALIZED BASELINE
+   ↓
+DEVIATION / Z-SCORE
+   ↓
+LONGITUDINAL DRIFT DETECTION
+   ↓
+STATUS / REVIEW FLAG
+</code></pre>
+<p>Let’s walk through one patient session.</p>
+<hr>
+<h1 id="game-configuration">1. Game Configuration</h1>
+<p>Before the game starts, the engine knows what activity is being performed.</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"activity_id"</span><span class="token punctuation">:</span> <span class="token string">"memory_match_v1"</span><span class="token punctuation">,</span>
+  <span class="token string">"primary_domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+  <span class="token string">"secondary_domains"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token string">"construct"</span><span class="token punctuation">:</span> <span class="token string">"visual_associative_memory"</span><span class="token punctuation">,</span>
+  <span class="token string">"num_pairs"</span><span class="token punctuation">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
+  <span class="token string">"board_size"</span><span class="token punctuation">:</span> <span class="token string">"3x3"</span><span class="token punctuation">,</span>
+  <span class="token string">"initial_exposure_ms"</span><span class="token punctuation">:</span> <span class="token number">5000</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>This is <strong>configuration</strong>, not patient data.</p>
+<p>The important thing here is that the engine knows:</p>
+<blockquote>
+<p>“This activity is intended to produce a measurement of visual associative memory.”</p>
+</blockquote>
+<hr>
+<h1 id="game-session-begins">2. Game Session Begins</h1>
+<p>Suppose the board contains four pairs:</p>
+<pre class=" language-text"><code class="prism  language-text">A A
+B B
+C C
+D D
+</code></pre>
+<p>The actual positions are randomized.</p>
+<p>The cards are initially shown for 5 seconds.</p>
+<p>Then they are hidden.</p>
+<p>The patient starts interacting.</p>
+<hr>
+<h1 id="raw-telemetry">3. Raw Telemetry</h1>
+<p>This is the <strong>most important distinction</strong>:</p>
+<p>The game should not send <code>"memory_score": 0.72</code>.</p>
+<p>The game should simply report <strong>what happened</strong>.</p>
+<p>For example:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"patient_id"</span><span class="token punctuation">:</span> <span class="token string">"patient_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"activity_id"</span><span class="token punctuation">:</span> <span class="token string">"memory_match_v1"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"started_at"</span><span class="token punctuation">:</span> <span class="token string">"2026-09-07T19:00:00Z"</span><span class="token punctuation">,</span>
+  <span class="token string">"ended_at"</span><span class="token punctuation">:</span> <span class="token string">"2026-09-07T19:01:24Z"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"events"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"event"</span><span class="token punctuation">:</span> <span class="token string">"card_selected"</span><span class="token punctuation">,</span>
+      <span class="token string">"timestamp"</span><span class="token punctuation">:</span> <span class="token number">1725735605123</span><span class="token punctuation">,</span>
+      <span class="token string">"card_id"</span><span class="token punctuation">:</span> <span class="token string">"card_7"</span><span class="token punctuation">,</span>
+      <span class="token string">"position"</span><span class="token punctuation">:</span> <span class="token number">7</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"event"</span><span class="token punctuation">:</span> <span class="token string">"card_selected"</span><span class="token punctuation">,</span>
+      <span class="token string">"timestamp"</span><span class="token punctuation">:</span> <span class="token number">1725735606710</span><span class="token punctuation">,</span>
+      <span class="token string">"card_id"</span><span class="token punctuation">:</span> <span class="token string">"card_2"</span><span class="token punctuation">,</span>
+      <span class="token string">"position"</span><span class="token punctuation">:</span> <span class="token number">2</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"event"</span><span class="token punctuation">:</span> <span class="token string">"match_result"</span><span class="token punctuation">,</span>
+      <span class="token string">"timestamp"</span><span class="token punctuation">:</span> <span class="token number">1725735606725</span><span class="token punctuation">,</span>
+      <span class="token string">"card_1"</span><span class="token punctuation">:</span> <span class="token string">"card_7"</span><span class="token punctuation">,</span>
+      <span class="token string">"card_2"</span><span class="token punctuation">:</span> <span class="token string">"card_2"</span><span class="token punctuation">,</span>
+      <span class="token string">"is_match"</span><span class="token punctuation">:</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+    <span class="token punctuation">{</span>
+      <span class="token string">"event"</span><span class="token punctuation">:</span> <span class="token string">"card_selected"</span><span class="token punctuation">,</span>
+      <span class="token string">"timestamp"</span><span class="token punctuation">:</span> <span class="token number">1725735612010</span><span class="token punctuation">,</span>
+      <span class="token string">"card_id"</span><span class="token punctuation">:</span> <span class="token string">"card_7"</span><span class="token punctuation">,</span>
+      <span class="token string">"position"</span><span class="token punctuation">:</span> <span class="token number">7</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"event"</span><span class="token punctuation">:</span> <span class="token string">"card_selected"</span><span class="token punctuation">,</span>
+      <span class="token string">"timestamp"</span><span class="token punctuation">:</span> <span class="token number">1725735613400</span><span class="token punctuation">,</span>
+      <span class="token string">"card_id"</span><span class="token punctuation">:</span> <span class="token string">"card_5"</span><span class="token punctuation">,</span>
+      <span class="token string">"position"</span><span class="token punctuation">:</span> <span class="token number">5</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"event"</span><span class="token punctuation">:</span> <span class="token string">"match_result"</span><span class="token punctuation">,</span>
+      <span class="token string">"timestamp"</span><span class="token punctuation">:</span> <span class="token number">1725735613415</span><span class="token punctuation">,</span>
+      <span class="token string">"card_1"</span><span class="token punctuation">:</span> <span class="token string">"card_7"</span><span class="token punctuation">,</span>
+      <span class="token string">"card_2"</span><span class="token punctuation">:</span> <span class="token string">"card_5"</span><span class="token punctuation">,</span>
+      <span class="token string">"is_match"</span><span class="token punctuation">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>This is the <strong>raw behavioral record</strong>.</p>
+<p>We don’t interpret it yet.</p>
+<hr>
+<h1 id="why-raw-telemetry-matters">4. Why Raw Telemetry Matters</h1>
+<p>Suppose the patient makes:</p>
+<pre class=" language-text"><code class="prism  language-text">7 → 2   WRONG
+7 → 5   CORRECT
+</code></pre>
+<p>The engine can later determine:</p>
+<ul>
+<li>
+<p>they selected card 7 before</p>
+</li>
+<li>
+<p>they subsequently returned to card 7</p>
+</li>
+<li>
+<p>they eventually found its pair</p>
+</li>
+<li>
+<p>how long they took</p>
+</li>
+<li>
+<p>how many attempts they made</p>
+</li>
+</ul>
+<p>This is much more useful than the game simply saying:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"score"</span><span class="token punctuation">:</span> <span class="token number">0.8</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>because we lose the underlying behavioral information.</p>
+<hr>
+<h1 id="feature-extraction">5. Feature Extraction</h1>
+<p>Now the <strong>Cognitive Engine</strong> receives the telemetry.</p>
+<p>Its first job is:</p>
+<blockquote>
+<p>Convert raw events into measurable behavioral features.</p>
+</blockquote>
+<p>For example:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"activity_id"</span><span class="token punctuation">:</span> <span class="token string">"memory_match_v1"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"features"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"pairs_presented"</span><span class="token punctuation">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
+    <span class="token string">"pairs_recalled"</span><span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+
+    <span class="token string">"total_attempts"</span><span class="token punctuation">:</span> <span class="token number">7</span><span class="token punctuation">,</span>
+    <span class="token string">"correct_matches"</span><span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+    <span class="token string">"incorrect_matches"</span><span class="token punctuation">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
+
+    <span class="token string">"accuracy"</span><span class="token punctuation">:</span> <span class="token number">0.75</span><span class="token punctuation">,</span>
+
+    <span class="token string">"repeated_selections"</span><span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+
+    <span class="token string">"completion_time_ms"</span><span class="token punctuation">:</span> <span class="token number">84000</span><span class="token punctuation">,</span>
+
+    <span class="token string">"mean_inter_response_time_ms"</span><span class="token punctuation">:</span> <span class="token number">1420</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Notice what happened.</p>
+<p>We went from:</p>
+<pre class=" language-text"><code class="prism  language-text">hundreds of raw events
+</code></pre>
+<p>to:</p>
+<pre class=" language-text"><code class="prism  language-text">a small set of interpretable measurements
+</code></pre>
+<hr>
+<h1 id="what-each-feature-means">6. What Each Feature Means</h1>
+<p>For example:</p>
+<h3 id="pairs_recalled"><code>pairs_recalled</code></h3>
+<pre class=" language-text"><code class="prism  language-text">3 / 4
+</code></pre>
+<p>The patient successfully found 3 of the 4 pairs.</p>
+<hr>
+<h3 id="accuracy"><code>accuracy</code></h3>
+<pre class=" language-text"><code class="prism  language-text">correct matches / total attempts
+</code></pre>
+<p>If:</p>
+<pre class=" language-text"><code class="prism  language-text">3 correct
+4 incorrect
+</code></pre>
+<p>then:</p>
+<pre class=" language-text"><code class="prism  language-text">3 / (3 + 4) = 0.4286
+</code></pre>
+<p><strong>Important:</strong> the exact definition of accuracy still needs to be finalized. We shouldn’t casually define it one way in the engine and another way in the game.</p>
+<hr>
+<h3 id="repeated_selections"><code>repeated_selections</code></h3>
+<p>Measures behavior such as:</p>
+<pre class=" language-text"><code class="prism  language-text">A → B
+...
+A → C
+</code></pre>
+<p>where the participant returns to a card/location they have previously encountered.</p>
+<p>This may provide information about memory/search efficiency.</p>
+<p>But we should be careful about interpreting it as “forgetting.”</p>
+<hr>
+<h3 id="completion_time"><code>completion_time</code></h3>
+<pre class=" language-text"><code class="prism  language-text">session_end - session_start
+</code></pre>
+<p>This is useful as an efficiency measure, but it is <strong>not automatically a processing-speed measure</strong>.</p>
+<hr>
+<h1 id="feature-normalization">7. Feature Normalization</h1>
+<p>Now we have raw features like:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"pairs_recalled"</span><span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+  <span class="token string">"accuracy"</span><span class="token punctuation">:</span> <span class="token number">0.4286</span><span class="token punctuation">,</span>
+  <span class="token string">"repeated_selections"</span><span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+  <span class="token string">"completion_time_ms"</span><span class="token punctuation">:</span> <span class="token number">84000</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>These are on completely different scales.</p>
+<p>So we normalize them.</p>
+<p>For example:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"normalized_features"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"recall_score"</span><span class="token punctuation">:</span> <span class="token number">0.75</span><span class="token punctuation">,</span>
+    <span class="token string">"accuracy_score"</span><span class="token punctuation">:</span> <span class="token number">0.4286</span><span class="token punctuation">,</span>
+    <span class="token string">"repetition_score"</span><span class="token punctuation">:</span> <span class="token number">0.80</span><span class="token punctuation">,</span>
+    <span class="token string">"efficiency_score"</span><span class="token punctuation">:</span> <span class="token number">0.65</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>The exact normalization functions are something we still need to formally design.</p>
+<p>For example, a simple bounded transformation could be:</p>
+<pre class=" language-text"><code class="prism  language-text">recall_score =
+pairs_recalled / pairs_presented
+</code></pre>
+<p>giving:</p>
+<pre class=" language-text"><code class="prism  language-text">3 / 4 = 0.75
+</code></pre>
+<p>But completion time is more complicated.</p>
+<p>We shouldn’t just say:</p>
+<pre class=" language-text"><code class="prism  language-text">score = 1 - completion_time / 100000
+</code></pre>
+<p>without establishing what the reference range means.</p>
+<p>A better V1 approach may be to normalize some features <strong>relative to the person’s baseline or a calibration distribution</strong>.</p>
+<p>That’s one of the things we need to settle scientifically.</p>
+<hr>
+<h1 id="domain-scoring">8. Domain Scoring</h1>
+<p>Now the normalized features enter the <strong>Memory Domain Scorer</strong>.</p>
+<p>Conceptually:</p>
+<pre class=" language-text"><code class="prism  language-text">Normalized Features
+        ↓
+Memory Scoring Function
+        ↓
+Memory Domain Score
+</code></pre>
+<p>Example output:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"score"</span><span class="token punctuation">:</span> <span class="token number">0.68</span><span class="token punctuation">,</span>
+
+  <span class="token string">"score_components"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"recall"</span><span class="token punctuation">:</span> <span class="token number">0.75</span><span class="token punctuation">,</span>
+    <span class="token string">"accuracy"</span><span class="token punctuation">:</span> <span class="token number">0.43</span><span class="token punctuation">,</span>
+    <span class="token string">"repetition_efficiency"</span><span class="token punctuation">:</span> <span class="token number">0.80</span><span class="token punctuation">,</span>
+    <span class="token string">"temporal_efficiency"</span><span class="token punctuation">:</span> <span class="token number">0.65</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>The <code>0.68</code> here is <strong>illustrative</strong>, not a finalized formula.</p>
+<p>We still need to determine whether a weighted composite is even the best approach.</p>
+<p>For example:</p>
+<pre class=" language-text"><code class="prism  language-text">Memory Score =
+0.40 × Recall
++ 0.30 × Accuracy
++ 0.15 × Repetition Efficiency
++ 0.15 × Temporal Efficiency
+</code></pre>
+<p>could be one candidate.</p>
+<p>But those weights should eventually be justified through validation rather than chosen because they look reasonable.</p>
+<hr>
+<h1 id="store-the-session-result">9. Store the Session Result</h1>
+<p>Now we have a clean session-level measurement.</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"patient_id"</span><span class="token punctuation">:</span> <span class="token string">"patient_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"activity_id"</span><span class="token punctuation">:</span> <span class="token string">"memory_match_v1"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"domain_scores"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"MEMORY"</span><span class="token punctuation">:</span> <span class="token number">0.68</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token string">"features"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"pairs_recalled"</span><span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+    <span class="token string">"accuracy"</span><span class="token punctuation">:</span> <span class="token number">0.4286</span><span class="token punctuation">,</span>
+    <span class="token string">"repeated_selections"</span><span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+    <span class="token string">"completion_time_ms"</span><span class="token punctuation">:</span> <span class="token number">84000</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token string">"valid"</span><span class="token punctuation">:</span> <span class="token boolean">true</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>This is what the longitudinal system cares about.</p>
+<p>It doesn’t need to repeatedly process every raw card tap when calculating the patient’s historical trend.</p>
+<hr>
+<h1 id="building-the-personalized-baseline">10. Building the Personalized Baseline</h1>
+<p>Suppose the patient plays the game several times during the calibration period.</p>
+<p>We might have:</p>
+<pre class=" language-text"><code class="prism  language-text">Session 1 → 0.68
+Session 2 → 0.74
+Session 3 → 0.79
+Session 4 → 0.76
+Session 5 → 0.81
+Session 6 → 0.78
+Session 7 → 0.80
+Session 8 → 0.82
+</code></pre>
+<p>The system calculates the reference distribution.</p>
+<p>For example:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"patient_id"</span><span class="token punctuation">:</span> <span class="token string">"patient_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"baseline"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"n_sessions"</span><span class="token punctuation">:</span> <span class="token number">8</span><span class="token punctuation">,</span>
+    <span class="token string">"mean"</span><span class="token punctuation">:</span> <span class="token number">0.7725</span><span class="token punctuation">,</span>
+    <span class="token string">"std_dev"</span><span class="token punctuation">:</span> <span class="token number">0.046</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>This means:</p>
+<blockquote>
+<p>This individual’s typical Memory Match performance during the reference period was approximately 0.77, with a standard deviation of approximately 0.046.</p>
+</blockquote>
+<hr>
+<h1 id="practice-effects">11. Practice Effects</h1>
+<p>There’s an important problem here.</p>
+<p>The sequence:</p>
+<pre class=" language-text"><code class="prism  language-text">0.68
+0.74
+0.79
+0.76
+0.81
+0.78
+0.80
+0.82
+</code></pre>
+<p>might not mean the person’s cognition improved.</p>
+<p>They may simply have <strong>learned how to play Memory Match</strong>.</p>
+<p>Therefore the baseline system needs to account for practice effects.</p>
+<p>For V1, one reasonable engineering approach could be:</p>
+<pre class=" language-text"><code class="prism  language-text">Calibration sessions
+        ↓
+Practice / familiarization
+        ↓
+Reference baseline
+</code></pre>
+<p>rather than immediately treating Session 1 as representative.</p>
+<p>But the exact number of calibration sessions needs to be determined through testing.</p>
+<hr>
+<h1 id="new-session">12. New Session</h1>
+<p>Now imagine two weeks later.</p>
+<p>The patient completes another Memory Match session.</p>
+<p>New score:</p>
+<pre class=" language-text"><code class="prism  language-text">0.68
+</code></pre>
+<p>Baseline:</p>
+<pre class=" language-text"><code class="prism  language-text">μ = 0.7725
+σ = 0.046
+</code></pre>
+<p>We calculate:</p>
+<pre class=" language-text"><code class="prism  language-text">Z = (X - μ) / σ
+</code></pre>
+<p>Therefore:</p>
+<pre class=" language-text"><code class="prism  language-text">Z = (0.68 - 0.7725) / 0.046
+</code></pre>
+<p>≈</p>
+<pre class=" language-text"><code class="prism  language-text">-2.01
+</code></pre>
+<p>So the output could be:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_014"</span><span class="token punctuation">,</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"current_score"</span><span class="token punctuation">:</span> <span class="token number">0.68</span><span class="token punctuation">,</span>
+
+  <span class="token string">"baseline"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"mean"</span><span class="token punctuation">:</span> <span class="token number">0.7725</span><span class="token punctuation">,</span>
+    <span class="token string">"std_dev"</span><span class="token punctuation">:</span> <span class="token number">0.046</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token string">"deviation"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"z_score"</span><span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">2.01</span><span class="token punctuation">,</span>
+    <span class="token string">"direction"</span><span class="token punctuation">:</span> <span class="token string">"BELOW_BASELINE"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>This does <strong>not</strong> mean:</p>
+<blockquote>
+<p>“Patient has cognitive decline.”</p>
+</blockquote>
+<p>It means:</p>
+<blockquote>
+<p>“This session’s measured performance is approximately 2 SD below the individual’s reference mean.”</p>
+</blockquote>
+<p>That’s a much more defensible statement.</p>
+<hr>
+<h1 id="longitudinal-drift-detection">13. Longitudinal Drift Detection</h1>
+<p>Now imagine the next sessions produce:</p>
+<pre class=" language-text"><code class="prism  language-text">Session 14 → Z = -2.01
+Session 15 → Z = -1.72
+Session 16 → Z = -1.91
+Session 17 → Z = -2.15
+</code></pre>
+<p>Now the system sees something different from a single anomalous session.</p>
+<p>It sees:</p>
+<pre class=" language-text"><code class="prism  language-text">persistent below-baseline performance
+</code></pre>
+<p>So the longitudinal layer can produce:</p>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"patient_id"</span><span class="token punctuation">:</span> <span class="token string">"patient_001"</span><span class="token punctuation">,</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+
+  <span class="token string">"recent_sessions"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_014"</span><span class="token punctuation">,</span>
+      <span class="token string">"z_score"</span><span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">2.01</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_015"</span><span class="token punctuation">,</span>
+      <span class="token string">"z_score"</span><span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">1.72</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_016"</span><span class="token punctuation">,</span>
+      <span class="token string">"z_score"</span><span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">1.91</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_017"</span><span class="token punctuation">,</span>
+      <span class="token string">"z_score"</span><span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">2.15</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+
+  <span class="token string">"trend"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"direction"</span><span class="token punctuation">:</span> <span class="token string">"DECLINING"</span><span class="token punctuation">,</span>
+    <span class="token string">"persistence"</span><span class="token punctuation">:</span> <span class="token string">"HIGH"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token string">"status"</span><span class="token punctuation">:</span> <span class="token string">"REVIEW_FLAG"</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Again, <strong>REVIEW_FLAG ≠ diagnosis</strong>.</p>
+<p>It means the system has identified a persistent behavioral-performance deviation that may warrant review.</p>
+<hr>
+<h1 id="the-whole-data-flow">14. The Whole Data Flow</h1>
+<p>So if we compress the entire V1 pipeline:</p>
+<h3 id="a.-game">A. Game</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"activity_id"</span><span class="token punctuation">:</span> <span class="token string">"memory_match_v1"</span><span class="token punctuation">,</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_014"</span><span class="token punctuation">,</span>
+  <span class="token string">"events"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token operator">...</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>↓</p>
+<h3 id="b.-feature-extraction">B. Feature Extraction</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_014"</span><span class="token punctuation">,</span>
+  <span class="token string">"features"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"pairs_recalled"</span><span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+    <span class="token string">"accuracy"</span><span class="token punctuation">:</span> <span class="token number">0.43</span><span class="token punctuation">,</span>
+    <span class="token string">"repeated_selections"</span><span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+    <span class="token string">"completion_time_ms"</span><span class="token punctuation">:</span> <span class="token number">84000</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>↓</p>
+<h3 id="c.-normalization">C. Normalization</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_014"</span><span class="token punctuation">,</span>
+  <span class="token string">"normalized_features"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"recall_score"</span><span class="token punctuation">:</span> <span class="token number">0.75</span><span class="token punctuation">,</span>
+    <span class="token string">"accuracy_score"</span><span class="token punctuation">:</span> <span class="token number">0.43</span><span class="token punctuation">,</span>
+    <span class="token string">"repetition_score"</span><span class="token punctuation">:</span> <span class="token number">0.80</span><span class="token punctuation">,</span>
+    <span class="token string">"efficiency_score"</span><span class="token punctuation">:</span> <span class="token number">0.65</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>↓</p>
+<h3 id="d.-domain-scoring">D. Domain Scoring</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"session_id"</span><span class="token punctuation">:</span> <span class="token string">"sess_014"</span><span class="token punctuation">,</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+  <span class="token string">"score"</span><span class="token punctuation">:</span> <span class="token number">0.68</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>↓</p>
+<h3 id="e.-baseline">E. Baseline</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+  <span class="token string">"baseline_mean"</span><span class="token punctuation">:</span> <span class="token number">0.7725</span><span class="token punctuation">,</span>
+  <span class="token string">"baseline_std"</span><span class="token punctuation">:</span> <span class="token number">0.046</span><span class="token punctuation">,</span>
+  <span class="token string">"n_sessions"</span><span class="token punctuation">:</span> <span class="token number">8</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>↓</p>
+<h3 id="f.-deviation">F. Deviation</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"current_score"</span><span class="token punctuation">:</span> <span class="token number">0.68</span><span class="token punctuation">,</span>
+  <span class="token string">"z_score"</span><span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">2.01</span><span class="token punctuation">,</span>
+  <span class="token string">"direction"</span><span class="token punctuation">:</span> <span class="token string">"BELOW_BASELINE"</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>↓</p>
+<h3 id="g.-longitudinal-detection">G. Longitudinal Detection</h3>
+<pre class=" language-json"><code class="prism  language-json"><span class="token punctuation">{</span>
+  <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"MEMORY"</span><span class="token punctuation">,</span>
+  <span class="token string">"trend"</span><span class="token punctuation">:</span> <span class="token string">"DECLINING"</span><span class="token punctuation">,</span>
+  <span class="token string">"persistent"</span><span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token string">"status"</span><span class="token punctuation">:</span> <span class="token string">"REVIEW_FLAG"</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<hr>
+<h1 id="what-v1-has-actually-built">15. What V1 Has Actually Built</h1>
+<p>This is important for your SIH explanation.</p>
+<p>We’re <strong>not just making a Memory Match game</strong>.</p>
+<p>We’re building this:</p>
+<pre class=" language-text"><code class="prism  language-text">                 ┌─────────────────────┐
+                 │   MEMORY MATCH      │
+                 └──────────┬──────────┘
+                            │
+                       Raw behavior
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ Feature Extraction  │
+                 └──────────┬──────────┘
+                            │
+                    measurable behavior
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ Normalization       │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ Domain Scoring      │
+                 └──────────┬──────────┘
+                            │
+                       Memory Score
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ Personal Baseline   │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ Deviation Analysis  │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │ Longitudinal Engine │
+                 └──────────┬──────────┘
+                            │
+                            ▼
+                 Persistent Change Flag
+</code></pre>
+<p>And <strong>this is the foundation for V2</strong>.</p>
+<p>V2 can later take the same pipeline and make the pieces intelligent:</p>
+<pre class=" language-text"><code class="prism  language-text">V1
+Fixed features
+     ↓
+Fixed normalization
+     ↓
+Fixed scoring
+     ↓
+Statistical baseline
+     ↓
+Rule-based drift detection
+
+
+V2
+Learned features
+     ↓
+Personalized normalization
+     ↓
+Learned domain model
+     ↓
+Individual trajectory model
+     ↓
+Adaptive activity selection
+     ↓
+Confidence-aware longitudinal inference
+</code></pre>
+<p>The critical architectural principle is: <strong>the game generates observations; the cognitive engine interprets them.</strong> The game itself should never decide that a person is “declining.”</p>
+
+    </div>
+  </div>
+</body>
+
+</html>
